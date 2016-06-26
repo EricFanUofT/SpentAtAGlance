@@ -37,12 +37,22 @@ class Producer(object):
                   'Charlotte', 'Madison', 'Abigail', 'Emily', 'Mia', 'Ava', 'Isabella', 'Sophia', 'Olivia', 'Emma']
         #26 last names initials
         lastname_initials=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
-        #Assume the average transaction is $10 with a standard deviation of $5
+
+
+        #include 20 types of credit card purchase
+        transaction_types=['cd/dvd', 'household item','in-app purchase','office supply', 'toy', 'clothing','restaurant', 'entertainment','grocery','sports', 'baby/toddler','gift','beauty/healthcare','fuel/gas','electronics', 'auto/tires', 'furniture','jewelry', 'computer', 'appliance']
+        #the average price corresponding to each type of transaction
+        mu={'cd/dvd':7.5, 'household item':10,'in-app purchase':10,'office supply':15, 'toy':20, 'clothing':20,'restaurant':20, 'entertainment':25,'grocery':30,'sports':30,  'baby/toddler':30,'gift':30,'beauty/healthcare':50,'fuel/gas':50,'electronics':300, 'auto/tires':500, 'furniture':500,'jewelry':750, 'computer':800, 'appliance': 1000}
+
+        sigma={'cd/dvd':2, 'household item':3,'in-app purchase':3,'office supply':4, 'toy':5, 'clothing':6,'restaurant':6, 'entertainment':6.5,'grocery':8, 'sports':10, 'baby/toddler':8,'gift':10,'beauty/healthcare':15,'fuel/gas':5,'electronics':90, 'auto/tires':150, 'furniture':150,'jewelry':200, 'computer':150, 'appliance': 200}
         
         #nominal total number of transactions(for all users combined) per day fluctuates with the month of the year
-        num_transaction_per_day_by_month=[200, 200, 300, 200, 200, 250, 300, 250, 200, 200, 300, 350]
+        num_transaction_per_day_by_month=[400000, 400000, 650000, 500000, 500000, 700000, 750000, 500000, 500000, 600000, 750000, 900000]
         #a factor to take into account for more transactions occurring during the weekends
-        weekend_factors=[1,1,1,1,1.5,1.5,1.5]
+        weekend_factors=[0.9,0.9,1,0.9,1.5,1.4,1.5]
+
+
+
 
         #start generating transactions from Jan 1, 2015
         transaction_date=date(2015,1,1)
@@ -65,17 +75,30 @@ class Producer(object):
                 hour=int(8+i*delay/3600)
                 transaction_time='{0:02d}'.format(hour)+'-'+'{0:02d}'.format(minute)+'-'+'{0:02d}'.format(second)		    
 	        #randomly generate a card holder name
-                name=names[random.randint(0, len(names)-1)]+' '+lastname_initials[random.randint(0,len(lastname_initials)-1)]
-                #randomly generate a transaction amount from normal distribution (mu=15 and sigma=10)
-                transaction_amount=random.gauss(15,10)
+                name=names[random.randint(0, len(names)-1)]+' '+lastname_initials[random.randint(0,len(lastname_initials)-1)]+'{0:03d}'.format(random.randint(0,999))
+                #randomly generate a transaction type with different chances of appearing
+                num=random.randint(1,100)
+                if num<=50:
+                    type_index=random.randint(0,7)
+                elif num<=85:
+                    type_index=random.randint(8,13)
+                elif num<=97:
+                    type_index=random.randint(14,16)
+                else:
+                    type_index=random.randint(17,19)
+ 
+                transaction_type=transaction_types[type_index]
+                #randomly generate the transaction amount using a normal distribution with (mu,sigma) corresponding to the particular transaction type
+                transaction_amount=random.gauss(mu[transaction_type],sigma[transaction_type])
  	        #limit the minimum transaction amount to $1
                 if transaction_amount<1.0:
                     transaction_amount=1.0
-                transaction_info={"date": transaction_date.strftime("%y-%m-%d"),
+                transaction_info={"date": transaction_date.strftime("%Y-%m-%d"),
                                   "day_of_week":transaction_weekday,
                                   "time": str(transaction_time),
                                   "name": name,
-                                  "amount":transaction_amount}
+                                  "trans_type": transaction_type,
+				  "amount":transaction_amount}
                 #write transaction_info to file
                 file.write(str(transaction_info)+'\n')                 
                 print str(transaction_info)
