@@ -6,6 +6,8 @@ scalaVersion := "2.10.4"
 
 libraryDependencies ++= Seq(
 
+"com.tdunning" % "t-digest" % "3.1",
+
 "com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0-M2",
 
 "org.apache.spark" %% "spark-core" % "1.6.1" % "provided",
@@ -30,4 +32,3 @@ mergeStrategy in assembly := {
   case _                                                   => MergeStrategy.first
 
 }
-
