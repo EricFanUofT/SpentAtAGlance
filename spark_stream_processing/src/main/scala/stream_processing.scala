@@ -26,7 +26,7 @@ object Stream_Processing {
 
     // Create context with 1 second batch interval
 
-    val conf=new SparkConf(true).setAppName("stream transactions").set("spark.cassandra.connection.host", "52.37.185.30")
+    val conf=new SparkConf(true).setAppName("stream transactions").set("spark.cassandra.connection.host", "52.34.145.96")
 
     val ssc = new StreamingContext(conf, Seconds(1))
 
@@ -45,7 +45,7 @@ object Stream_Processing {
 
         if(!df.rdd.isEmpty){
             //Do not allow multiple transactions to occur within one second for the same card holder (which are randomly generated); combine into a single transaction if necessary
-            sqlContext.sql("SELECT name, date, time, CAST( day_of_week as Int), sum(amount) as transaction FROM transaction_info GROUP BY name, date, time, day_of_week").map{case Row(name: String, date: String, time: String, day_of_week:Int, transaction: Double) => Transaction(name,date,time,day_of_week,transaction)}.saveToCassandra("transaction_space", "transaction_log")
+            sqlContext.sql("SELECT name, date, time, CAST( day_of_week as Int), sum(amount) as transaction,first(trans_type) as trans_type FROM transaction_info GROUP BY name, date, time, day_of_week").map{case Row(name: String, date: String, time: String, day_of_week:Int, transaction: Double, trans_type: String) => Transaction(name,date,time,day_of_week,transaction,trans_type)}.saveToCassandra("transaction_space", "transaction_log")
         }
     }
     // Start the computation
@@ -56,7 +56,7 @@ object Stream_Processing {
   }
 
 }
-case class Transaction(name:String, date:String, time:String, day_of_week:Int, transaction:Double)
+case class Transaction(name:String, date:String, time:String, day_of_week:Int, transaction:Double, trans_type: String)
 
 
 /** Lazily instantiated singleton instance of SQLContext */
