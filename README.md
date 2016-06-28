@@ -6,10 +6,17 @@ SpentAtAGlance is a tool that summarizes for the users how much money they have 
 
 Card holder API (http://www.spentglance.online/)
 
+<p align="center">
+  <img src="/images/SpentAtAGlance_screenshot1.png" >
+</p>
 
 On the other hand, it summarizes statistics for the credit card company including the total monthly transactions of all users, total monthly transaction of an average user, and the percentiles of transactions of different transaction categories.  The results will help the company to make more informed marketing decisions.
 
 Card company API (http://www.spentglance.online/card_company)
+
+<p align="center">
+  <img src="/images/SpentAtAGlance_screenshot2.png" />
+</p>
 
 ### Data Engineering Tools
 SpentAtAGlance uses the following tools for the data pipeline:
@@ -20,6 +27,10 @@ SpentAtAGlance uses the following tools for the data pipeline:
 - Spark Streaming
 - Apache Cassandra
 - Flask with Highcharts and Bootstrap
+
+<p align="center">
+  <img src="/images/data_pipeline.png" width="550"/>
+</p>
 
 ### Data Source
 SpentAtAGlance uses producer scripts found in the kafka_producers folder to synthesis the data source as json formatted strings. The input has the following schema:
