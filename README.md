@@ -13,21 +13,23 @@ Card company API (http://www.spentglance.online/card_company)
 
 ### Data Engineering Tools
 SpentAtAGlance uses the following tools for the data pipeline:
--Apache Kafka
--Apache HDFS
--Spark
--Spark Streaming
--Apache Cassandra
--Flask with Highcharts and Bootstrap
+
+- Apache Kafka
+- Apache HDFS
+- Spark
+- Spark Streaming
+- Apache Cassandra
+- Flask with Highcharts and Bootstrap
 
 ### Data Source
 SpentAtAGlance uses producer scripts found in the kafka_producers folder to synthesis the data source as json formatted strings. The input has the following schema:
-"date": String      ("%Y-%m-%d")
-"day_of_week": int
-"time": String      ("%H-%M-%S")
-"name": String
-"trans_type": String
-"amount": double
+
+- "date": String      ("%Y-%m-%d")
+- "day_of_week": int
+- "time": String      ("%H-%M-%S")
+- "name": String
+- "trans_type": String
+- "amount": double
 
 The historical data for batch processing is ~50 GB in size containing transaction record as early as Jan 1, 2015.  There are approximately 1.3 million different users.  The number transactions per day is randomly simulated with variety between different days of the week and different months of the year.  There are 20 different transaction categories, each with a different average costs and standard deviation.  
 
@@ -37,43 +39,49 @@ Apache Kafka is used for reading messages produced by the kafka_producers into t
 ### Batch Processing
 Ideally, messages from the Kafka topic would be consumed by Camus to HDFS for batch processing daily by Spark to update the statistical summaries.  But for the sake of this project, the 50 GB transaction data was already synthesized and stored in HDFS; nevertheless, Camus has been tested to work with the current pipeline since the messages are in json format.
 Various processes are performed by Spark including:
--determining the total and maximum transaction per day, per day on a particular day of the week, and per month
--determining the total monthly transaction per month of all users and number of distinct spenders
--determining the monthly total transaction for each category for each user
--determining the monthly total transaction and number of distinct spenders for each category
--determining the approximate 25th, 50th, 75th, and 90th percentile of transaction amount for each category for each quarter (every 3 months) using the T-digest approach
+
+- determining the total and maximum transaction per day, per day on a particular day of the week, and per month
+- determining the total monthly transaction per month of all users and number of distinct spenders
+- determining the monthly total transaction for each category for each user
+- determining the monthly total transaction and number of distinct spenders for each category
+- determining the approximate 25th, 50th, 75th, and 90th percentile of transaction amount for each category for each quarter (every 3 months) using the T-digest approach
+
 The results are stored in Casssandra
 
 sbt library dependencies
--"com.tdunning" % "t-digest" % "3.1"
--"com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0-M2"
--"org.apache.spark" %% "spark-core" % "1.6.1" % "provided"
--"org.apache.spark" %% "spark-sql" % "1.6.1" % "provided"
+
+- "com.tdunning" % "t-digest" % "3.1"
+- "com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0-M2"
+- "org.apache.spark" %% "spark-core" % "1.6.1" % "provided"
+- "org.apache.spark" %% "spark-sql" % "1.6.1" % "provided"
 
 
 ### Stream Processing
 While the previous day's transaction data are being batch processed, new transaction data will be stream processed and stored in a temporary table named "transaction_logs" in Cassandra.  The micro batch timeframe is 1 s (consecutive transactions realistically take more than 1 s to be processed).  The process involved include:
--reading the name, date, day_of_week, amount, transaction type into Cassandra
+
+- reading the name, date, day_of_week, amount, transaction type into Cassandra
 
 sbt library dependencies
--"com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0-M2"
--"org.apache.spark" %% "spark-core" % "1.6.1" % "provided"
--"org.apache.spark" %% "spark-sql" % "1.6.1" % "provided"
--"org.apache.spark" % "spark-streaming_2.10" % "1.6.1" % "provided"
--"org.apache.spark" % "spark-streaming-kafka_2.10" % "1.6.1"
+
+- "com.datastax.spark" %% "spark-cassandra-connector" % "1.6.0-M2"
+- "org.apache.spark" %% "spark-core" % "1.6.1" % "provided"
+- "org.apache.spark" %% "spark-sql" % "1.6.1" % "provided"
+- "org.apache.spark" % "spark-streaming_2.10" % "1.6.1" % "provided"
+- "org.apache.spark" % "spark-streaming-kafka_2.10" % "1.6.1"
 
 
 ### Database
 Cassandra is utilized for storing the data (since the data involves time series).  The keyspace and various tables were created in Cassandra using:
--CREATE KEYSPACE transaction_space WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
-  -CREATE TABLE daily_summary (name text, date text, total_transaction double, maximum_transaction double, PRIMARY KEY(name,date)) WITH CLUSTERING ORDER BY (date DESC);
-  -CREATE TABLE monthly_summary(name text, month text, total_transaction double, maximum_transaction double, PRIMARY KEY(name, month)) WITH CLUSTERING ORDER BY (month DESC);
-  -CREATE TABLE day_of_week_summary(name text, date text, day_of_week text, total_transaction double, maximum_transaction double, PRIMARY KEY ((name, day_of_week), date)) WITH CLUSTERING ORDER BY (date DESC);
-  -CREATE TABLE user_category_summary(name text, trans_type text, month text, total_transaction double, PRIMARY KEY((name, trans_type),month))WITH CLUSTERING ORDER BY (month DESC);
-  -CREATE TABLE category_summary_all_users (month text, trans_type text, total_transaction double, distinct_users bigint, PRIMARY KEY(month,trans_type)) WITH CLUSTERING ORDER BY (trans_type ASC) ;
-  -CREATE TABLE monthly_summary_all_users (key text, month text, total_transaction double,maximum_transaction double, distinct_users bigint, PRIMARY KEY (key, month)) WITH CLUSTERING ORDER BY (month DESC);
-  -CREATE TABLE quarterly_category_percentile (category text, quarter text, twenty_fifth double, fiftieth double, seventy_fifth double, ninetieth double, PRIMARY KEY(category, quarter)) WITH CLUSTERING ORDER BY (quarter DESC);
-  -CREATE TABLE transaction_log (name text, date text, time text, day_of_week int, transaction double, trans_type text, PRIMARY KEY ((name,date),time)) WITH CLUSTERING ORDER BY (time DESC) ;
+
+- CREATE KEYSPACE transaction_space WITH replication = {'class': 'SimpleStrategy', 'replication_factor' : 3};
+  - CREATE TABLE daily_summary (name text, date text, total_transaction double, maximum_transaction double, PRIMARY KEY(name,date)) WITH CLUSTERING ORDER BY (date DESC);
+  - CREATE TABLE monthly_summary(name text, month text, total_transaction double, maximum_transaction double, PRIMARY KEY(name, month)) WITH CLUSTERING ORDER BY (month DESC);
+  - CREATE TABLE day_of_week_summary(name text, date text, day_of_week text, total_transaction double, maximum_transaction double, PRIMARY KEY ((name, day_of_week), date)) WITH CLUSTERING ORDER BY (date DESC);
+  - CREATE TABLE user_category_summary(name text, trans_type text, month text, total_transaction double, PRIMARY KEY((name, trans_type),month))WITH CLUSTERING ORDER BY (month DESC);
+  - CREATE TABLE category_summary_all_users (month text, trans_type text, total_transaction double, distinct_users bigint, PRIMARY KEY(month,trans_type)) WITH CLUSTERING ORDER BY (trans_type ASC) ;
+  - CREATE TABLE monthly_summary_all_users (key text, month text, total_transaction double,maximum_transaction double, distinct_users bigint, PRIMARY KEY (key, month)) WITH CLUSTERING ORDER BY (month DESC);
+  - CREATE TABLE quarterly_category_percentile (category text, quarter text, twenty_fifth double, fiftieth double, seventy_fifth double, ninetieth double, PRIMARY KEY(category, quarter)) WITH CLUSTERING ORDER BY (quarter DESC);
+  - CREATE TABLE transaction_log (name text, date text, time text, day_of_week int, transaction double, trans_type text, PRIMARY KEY ((name,date),time)) WITH CLUSTERING ORDER BY (time DESC) ;
 
 ### API calls
 Flask and highcharts are used to render the front-end user interface.  The batch-processed results were combined with the stream-processed data to calculate the current month's spending and for the various charts.
