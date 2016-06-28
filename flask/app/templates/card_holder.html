@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Spent at a Glance</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <style>
+    .title {
+      font-family: Helvetica, sans-serif;
+      color: red;
+      font-weight: bold;
+      font-variant: small-caps;
+      font-style: italic;
+    }
+
+    body {
+      background-color: #E6E6FA;
+    }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <form action"get_card_holder_info" method="POST">
+      <div class="form-group">
+        <h3 class="title">Welcome to SpentAtAGlance!</h3>
+        <h2>Please type in a card holder's name:</h2>
+        <h5 style="color:gray;">(e.g., A common name, "Alexander", followed by a last name initial and three digits from 000 to 500, "J091")</h5> 
+        <br /><br />
+        <input type="text" class="form-control" id="userid" name="userid" placeholder="Alexander J091">
+
+        <br /><br />
+        <button type="submit" value="Send" name="userid-container" class="btn btn-default id-submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</body>

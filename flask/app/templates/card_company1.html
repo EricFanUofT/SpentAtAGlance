@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-6"><div id={{ chartID1|safe }} class="chart"></div></div>
+      <div class="col-sm-6"><div id={{ chartID2|safe }} class="chart"></div></div>
+    </div>
+
+
+
+<form action"get_percentile_info" method="POST">
+  <select id="trans_type" name="trans_type">
+    <option value="appliance">appliance</option>
+    <option value="auto/tires">auto/tires</option>
+    <option value="baby/toddler">baby/toddler</option>
+    <option value="beauty/healthcare">beauty/healthcare</option>
+    <option value="cd/dvd">cd/dvd</option>
+    <option value="clothing">clothing</option>
+    <option value="computer">computer</option>
+    <option value="electronics">electronics</option>
+    <option value="entertainment">entertainment</option>
+    <option value="fuel/gas">fuel/gas</option>
+    <option value="furniture">furniture</option>
+    <option value="gift">gift</option>
+    <option value="grocery">grocery</option>
+    <option value="household item">household item</option>
+    <option value="in-app purchase">in-app purchase</option>
+    <option value="jewelry">jewelry</option>
+    <option value="office supply">office supply</option>
+    <option value="restaurant">restaurant</option>
+    <option value="sports">sports</option>
+    <option value="toy">toy</option>
+  </select>
+
+  <br><br>
+  <input type="submit" value="Send" name="trans_type-container" >
+</form>
+  <script>
+    var chart_id1 = {{ chartID1|safe }}
+    var series1 = {{ series1|safe }}
+    var title1 = {{ title1|safe }}
+    var xAxis1 = {{ xAxis1|safe }}
+    var yAxis1 = {{ yAxis1|safe }}
+    var chart1 = {{ chart1|safe }}
+        		
+    var chart_id2 = {{ chartID2|safe }}
+    var series2 = {{ series2|safe }}
+    var title2 = {{ title2|safe }}
+    var xAxis2 = {{ xAxis2|safe }}
+    var yAxis2 = {{ yAxis2|safe }}
+    var chart2 = {{ chart2|safe }}
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="../static/js/card_company1.js"></script>
+  </body>
+</html>
