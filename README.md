@@ -4,6 +4,8 @@
 ### Summary
 SpentAtAGlance is a tool that summarizes for the users how much money they have spent on the current day/current month, compares their current spendings with those of the past few days, past few months, and also past few same day of the week (taking into account users might have differnt transaction activities on different days of the week, e.g. more on the weekends), and what have they been spending money on.  In addition comments on whether the users are meeting their budgeting target.  Essentially, this is a tool for users to quickly visualize how much they have spent already before making a new purchase, and hopefully helps the users to meet their budgeting goals.
 
+*The presentation slides can be found* [*here*] (http://www.slideshare.net/EricFan19/eric-fan-insight-project-demo-63572736?qid=e24fd0fb-73f2-476e-8c99-057d605768f2&v=&b=&from_search=1)
+
 Card holder API (http://www.spentglance.online/)
 
 <p align="center">
