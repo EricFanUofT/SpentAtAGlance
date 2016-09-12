@@ -44,7 +44,7 @@ SpentAtAGlance uses producer scripts found in the kafka_producers folder to synt
 - "trans_type": String
 - "amount": double
 
-The historical data for batch processing is ~50 GB in size containing transaction record as early as Jan 1, 2015.  There are approximately 1.3 million different users.  The number transactions per day is randomly simulated with variety between different days of the week and different months of the year.  There are 20 different transaction categories, each with a different average costs and standard deviation.  
+The historical data for batch processing is ~50 GB in size containing transaction record as early as Jan 1, 2015.  There are approximately 1.3 million different users.  The number of transactions per day is randomly simulated with variety between different days of the week and different months of the year.  There are 20 different transaction categories, each with a different average cost and standard deviation.  
 
 ### Data Ingestion
 Apache Kafka is used for reading messages produced by the kafka_producers into the topic "transactions_message" which can be consumed by Camus (to store to hdfs for batch processing) and by Spark-Streaming (for stream processing)
