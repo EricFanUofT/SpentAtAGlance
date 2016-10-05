@@ -6,6 +6,9 @@ SpentAtAGlance is a tool that summarizes for the users how much money they have 
 
 *The presentation slides can be found* [*here*] (http://www.slideshare.net/EricFan19/eric-fan-insight-project-demo-63572736?qid=e24fd0fb-73f2-476e-8c99-057d605768f2&v=&b=&from_search=1)
 
+*Please note that the website (http://www.spentglance.online/) has been taken down, but a demonstration of how this tool works can be found in the following youtube link:* https://www.youtube.com/watch?v=miDFxvX_4eQ&feature=youtu.be
+
+
 Card holder API (http://www.spentglance.online/)
 
 <p align="center">
